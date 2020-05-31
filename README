@@ -1,0 +1,47 @@
+A program used to find the quatitative indicator for the state of neural network 
+
+--coverage_criteria/calculate_coverage.py
+	-calculate the trained model's nc, kmn, nb, sna, tknc, tknp
+	-the coverage results were restored in <draw_picture/data>
+	-the trained models were restored in models which reflected the states such as overfitting underfitting
+
+--draw_picture/draw.py
+	draw the pictures about loss-acc, coverage in <draw_picture/loss_acc> <draw_picture/picture>
+
+Conclusion1:
+	The coverage is strongly correlated to the size of dataset and the dataset itself, but not related to the model state.
+
+--draw_picture/statistic_neural.py
+	-Count the number of repetitions of activated neurons in <draw_picture/ndata>  and draw the pictures at the same time  
+	
+	-Count the repetition rate of each layer stored in <draw_picture/st_ndata/layer_rate> and draw the pictures stored in <draw_picture/st_ndata/layer_rate_picture>
+		Number of activated neurons/(all neurons * dataset size)
+
+--statistic/statistic_cov.py	
+	-calculate the activation rate of each layer of the neural network 
+		the activation rate of each layer: all neurals in this layer has been activated all the time
+
+Conclusion2: 
+	Some layers will be fully activated, while some layers will change with the model training state. This can explain the role of each layer in a certain extent. The activation rate of some layers in the network is the key to reflecting the state  of the model. 
+	But it depends on the network and dataset. So it can not be the quatitative indicator.
+
+
+--filter1/util.py
+	-Calculate the Euclidean distance of adjacent models (eg.epoch = 1,2 epoch = 2,3)
+		dis1 = euc（epoch=1 the first layer's filter，epoch=1 the last layer's filter）
+		dis2 = euc（epoch=2 the first layer's filter，epoch=1 the last layer's filter）
+
+		Equation1 euc（epoch=1 the first layer's filter，epoch=2 the first layer's filter）/（dis1-dis2)
+		Equation2 euc（epoch=1 the first layer's filter/dis1，epoch=2 the first layer's filter/dis2）
+
+		Using Equation 2 to calculate the Euclidean distance between the 0th model and other models (eg.epoch = 0, 2 epoch = 0, 3)
+	-Try to find the  scope with skewness
+
+Conclusion3: 
+	The Euclidean distance of the same layer in different models, as the model becomes more and more sufficient, the gap between the Euclidean distance becomes smaller and smaller. 
+		In the process of the model from underfitting to overfitting, more and more feature extraction.Euclidean distance is a way to reflect changes in features.From full model training to over-fitting, feature changes will become slower and slower.
+	The code still sums up all the layers and then compares it, this still have the same conclusion.Try to use the forward and reverse skewness records to find this interval, but it cannot be found accurately
+Conclusion4:
+	Calculate the difference between the first convolutional layer and the last convolutional layer in the same model. The model training will be insufficient to overfit, and the difference value will become larger and larger.
+
+The code is based on Combinatorial Testing for Deep Learning Systems, https://arxiv.org/abs/1806.07723#
